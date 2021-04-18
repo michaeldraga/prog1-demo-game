@@ -47,7 +47,12 @@ public class Player {
 
     private static int restrict(int val, int min, int max) {
         if (val < min) return min;
-        if (val > max) return max;
+        if (val > max - 1) return max - 1;
         return val;
+    }
+
+    public void reset() {
+        x = 0;
+        y = 0;
     }
 }
