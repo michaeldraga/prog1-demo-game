@@ -9,40 +9,38 @@ public class Player {
 
     static final int SIZE = 40;
     static final int START = UNIT_SIZE / 2 - SIZE / 2;
-    int x,y;
+    Position position;
 
     final Image img;
 
     public Player() {
-        this.x = 0;
-        this.y = 0;
+        this.position = new Position(0, 0);
         this.img = GamePanel.readImage(GamePanel.PLAYER_IMG_PATH);
     }
 
     public Player(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.position = new Position(x, y);
         this.img = GamePanel.readImage(GamePanel.PLAYER_IMG_PATH);
     }
 
     public void paint(Graphics g) {
         ImageObserver observer = (img, infoflags, x, y, width, height) -> false;
-        g.drawImage(this.img, START + UNIT_SIZE * x, START + UNIT_SIZE * y, SIZE, SIZE, observer);
+        g.drawImage(this.img, START + UNIT_SIZE * position.x, START + UNIT_SIZE * position.y, SIZE, SIZE, observer);
     }
 
     public void moveX(int amount) {
-        int newX = x + amount;
-        if (newX >= 0 && newX < COLUMNS) x = newX;
+        int newX = position.x + amount;
+        if (newX >= 0 && newX < COLUMNS) position.x = newX;
     }
 
     public void moveY(int amount) {
-        int newY = y + amount;
-        if (newY >= 0 && newY < ROWS) y = newY;
+        int newY = position.y + amount;
+        if (newY >= 0 && newY < ROWS) position.y = newY;
     }
 
     public void move(int x, int y) {
-        this.x = restrict(this.x + x, 0, COLUMNS);
-        this.y = restrict(this.y + y, 0, ROWS);
+        this.position.x = restrict(this.position.x + x, 0, COLUMNS);
+        this.position.y = restrict(this.position.y + y, 0, ROWS);
     }
 
     private static int restrict(int val, int min, int max) {
@@ -52,7 +50,6 @@ public class Player {
     }
 
     public void reset() {
-        x = 0;
-        y = 0;
+        position = new Position(0, 0);
     }
 }
