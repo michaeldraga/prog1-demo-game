@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,22 +21,22 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
     static final int COLUMNS = 10;
     static final int ROWS = 10;
+    static final int N_OF_STARS = 10;
     static final Color COLOR_SQUARE = Color.black;
     static final Color COLOR_DOOR = Color.red;
     static final String PLAYER_IMG_PATH = "app/src/main/resources/player.png";
     static final String STAR_IMG_PATH = "app/src/main/resources/star.png";
-    final Image starImg;
-    final Image playerImg;
-    private java.util.List<Star> stars = new ArrayList<>();
+    private final java.util.List<Star> stars = new ArrayList<>();
     final List<Move> moves = new ArrayList<>();
     private Button startStopButton;
+    private Button resetButton;
     private Label label;
 
     long lastMove = 0;
 
     boolean running = false;
-    private Player player;
-    private Door door;
+    private final Player player;
+    private final Door door;
     int score = 0;
 
     Timer timer;
@@ -45,32 +44,48 @@ public class GamePanel extends JPanel implements ActionListener {
     GamePanel() {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.WHITE);
+        this.setLayout(null);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
-        this.initButton();
+        this.initStartStopButton();
+        this.initResetButton();
         this.initLabel();
-        this.setLayout(null);
         this.startGame();
         this.setScore();
         this.player = new Player();
         this.door = new Door(9, 4);
-        this.playerImg = readImage(PLAYER_IMG_PATH);
-        this.starImg = readImage(STAR_IMG_PATH);
+        this.setStars(N_OF_STARS);
         new Sketch(moves);
-        this.setStars(10);
     }
 
     private void initLabel() {
         label = new Label("");
-        label.setBounds(500, 30, 70, 20);
+        label.setBounds(500, 60, 70, 20);
         this.add(label);
     }
 
-    private void initButton() {
+    private void initStartStopButton() {
         startStopButton = new Button("Play");
         startStopButton.setBounds(500, 0, 50, 20);
         startStopButton.addActionListener(e -> startStopMoves());
         this.add(startStopButton);
+    }
+
+    private void initResetButton() {
+        resetButton = new Button("Reset");
+        resetButton.setBounds(500, 30, 50, 20);
+        resetButton.addActionListener(e -> resetEverything());
+        this.add(resetButton);
+    }
+
+    private void resetEverything() {
+        player.reset();
+        stars.clear();
+        moves.clear();
+        setStars(N_OF_STARS);
+        new Sketch(moves);
+        score = 0;
+        setScore();
     }
 
     private void setStars(int nOfStars) {
