@@ -77,7 +77,8 @@ public class GamePanel extends JPanel implements ActionListener {
         while (stars.size() < nOfStars) {
             Star newStar = new Star();
             if (stars.stream().anyMatch(s -> Star.positionEquals(s, newStar)) ||
-                Star.positionEquals(newStar, player)) {
+                Star.positionEquals(newStar, player) ||
+                Star.positionEquals(newStar, door)) {
                 continue;
             }
             stars.add(newStar);
