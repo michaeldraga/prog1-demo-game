@@ -33,48 +33,74 @@ public class Player {
     }
 
     public void moveX(int amount) {
+        if (amount < 0) System.out.println("Der Spieler geht nach links");
+        else if (amount > 0) System.out.println("Der Spieler geht nach rechts");
+        else return;
+        int newX = position.x + amount;
+        if (newX >= 0 && newX < COLUMNS) position.x = newX;
+    }
+
+    public void moveX(int amount, boolean print) {
+        if (print) {
+            if (amount < 0) System.out.println("Der Spieler geht nach links");
+            else if (amount > 0) System.out.println("Der Spieler geht nach rechts");
+            else return;
+        }
         int newX = position.x + amount;
         if (newX >= 0 && newX < COLUMNS) position.x = newX;
     }
 
     public void moveY(int amount) {
+        if (amount < 0) System.out.println("Der Spieler geht nach oben");
+        else if (amount > 0) System.out.println("Der Spieler geht nach unten");
+        else return;
+        int newY = position.y + amount;
+        if (newY >= 0 && newY < ROWS) position.y = newY;
+    }
+
+    public void moveY(int amount, boolean print) {
+        if (print) {
+            if (amount < 0) System.out.println("Der Spieler geht nach oben");
+            else if (amount > 0) System.out.println("Der Spieler geht nach unten");
+            else return;
+        }
         int newY = position.y + amount;
         if (newY >= 0 && newY < ROWS) position.y = newY;
     }
 
     public void move(int x, int y) {
-        this.position.x = restrict(this.position.x + x, 0, COLUMNS);
-        this.position.y = restrict(this.position.y + y, 0, ROWS);
+        moveX(x);
+        moveY(y);
     }
 
     public void move(Position pos) {
-        this.position.x = restrict(this.position.x + pos.x, 0, COLUMNS);
-        this.position.y = restrict(this.position.y + pos.y, 0, ROWS);
+        moveX(pos.x);
+        moveY(pos.y);
     }
 
-    public boolean isExitInRowRight() {
+    public boolean isExitRight() {
         return position.x < doorPosition.x && position.y == doorPosition.y;
     }
 
-    public boolean isExitInRowLeft() {
+    public boolean isExitLeft() {
         return position.x > doorPosition.x && position.y == doorPosition.y;
     }
 
-    public boolean isExitInColumnDown() {
+    public boolean isExitDown() {
         return position.y < doorPosition.y && position.x == doorPosition.x;
     }
 
-    public boolean isExitInColumnUp() {
+    public boolean isExitUp() {
         return position.y > doorPosition.y && position.x == doorPosition.x;
     }
 
     private void simMoveX(int amount) {
-        moveX(amount);
+        moveX(amount, false);
         moves.add(new Position(amount, 0));
     }
 
     private void simMoveY(int amount) {
-        moveY(amount);
+        moveY(amount, false);
         moves.add(new Position(0, amount));
     }
 
