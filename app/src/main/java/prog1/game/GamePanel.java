@@ -27,7 +27,6 @@ public class GamePanel extends JPanel implements ActionListener {
     static final String PLAYER_IMG_PATH = "app/src/main/resources/player.png";
     static final String STAR_IMG_PATH = "app/src/main/resources/star.png";
     private final java.util.List<Star> stars = new ArrayList<>();
-    final List<Move> moves = new ArrayList<>();
     private Button startStopButton;
     private Button resetButton;
     private Label scoreLabel;
@@ -54,10 +53,12 @@ public class GamePanel extends JPanel implements ActionListener {
         this.initScoreLabel();
         this.initGameOverLabel();
         this.setScore();
+        this.door = new Door();
         this.player = new Player();
-        this.door = new Door(9, 4);
+        this.player.setDoorPosition(door.position);
         this.setStars(N_OF_STARS);
-        new Sketch(moves);
+        new Sketch(player);
+        this.player.reset();
         this.startGame();
     }
 
@@ -94,11 +95,12 @@ public class GamePanel extends JPanel implements ActionListener {
         gameOver = false;
         running = false;
         this.remove(this.gameOverLabel);
-        player.reset();
         stars.clear();
-        moves.clear();
+        player.resetMoves();
+        player.reset();
         setStars(N_OF_STARS);
-        new Sketch(moves);
+        new Sketch(player);
+        player.reset();
         score = 0;
         setScore();
         this.grabFocus();
@@ -142,6 +144,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void startStopMoves() {
         running = !running;
         lastMove = System.currentTimeMillis();
+        this.grabFocus();
     }
 
     public void paintComponent(Graphics g) {
@@ -177,9 +180,8 @@ public class GamePanel extends JPanel implements ActionListener {
             if (running) {
                 if (System.currentTimeMillis() - lastMove > MOVE_DELAY) {
                     lastMove = System.currentTimeMillis();
-                    Move nextMove = moves.remove(0);
-                    player.move(nextMove.x, nextMove.y);
-                    if (moves.size() == 0) running = false;
+                    player.nextMove();
+                    if (player.movesDone()) running = false;
                 }
             }
             Optional<Star> overlapped = stars.stream().filter(s -> Position.equals(s.position, player.position)).findAny();
