@@ -2,7 +2,7 @@ package prog1.game;
 
 public class Sketch {
 
-    public static void sketch(Player player) {
+    public static void sketch(Player player) throws MaxMovesException {
 
     }
 }
