@@ -57,8 +57,6 @@ public class GamePanel extends JPanel implements ActionListener {
         this.player = new Player();
         this.player.setDoorPosition(door.position);
         this.setStars(N_OF_STARS);
-        new Sketch(player);
-        this.player.reset();
         this.startGame();
     }
 
@@ -99,7 +97,7 @@ public class GamePanel extends JPanel implements ActionListener {
         player.resetMoves();
         player.reset();
         setStars(N_OF_STARS);
-        new Sketch(player);
+        calculateSketch();
         player.reset();
         score = 0;
         setScore();
@@ -144,6 +142,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void startStopMoves() {
         running = !running;
         lastMove = System.currentTimeMillis();
+        calculateSketch();
         this.grabFocus();
     }
 
@@ -167,6 +166,13 @@ public class GamePanel extends JPanel implements ActionListener {
                 g.fillRect(UNIT_SIZE * j + 1, UNIT_SIZE * i + 1, UNIT_SIZE - 2, UNIT_SIZE - 2);
             }
         }
+    }
+
+    private void calculateSketch() {
+        player.moves.clear();
+        Position lastPosition = new Position(player.position);
+        Sketch.sketch(player);
+        player.position = lastPosition;
     }
 
     public void gameOver(Graphics g) {
