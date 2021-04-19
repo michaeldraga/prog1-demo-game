@@ -171,7 +171,13 @@ public class GamePanel extends JPanel implements ActionListener {
     private void calculateSketch() {
         player.moves.clear();
         Position lastPosition = new Position(player.position);
-        Sketch.sketch(player);
+        try {
+            Sketch.sketch(player);
+        } catch (MaxMovesException e) {
+            System.out.println("Your sketch has exceeded the maximum number of allowed moves (10,000)." +
+                    "This is most likely caused by an error in your sketch logic.");
+            running = false;
+        }
         player.position = lastPosition;
     }
 
