@@ -14,6 +14,7 @@ public class Player {
     Position position;
     Position doorPosition;
     final List<Action> moves = new ArrayList<>();
+    boolean won = false;
 
     final Image img;
 
