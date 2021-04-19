@@ -78,57 +78,63 @@ public class Player {
         moveY(pos.y);
     }
 
-    public boolean isExitRight() {
+    public boolean isExitRight() throws MaxMovesException {
         boolean b = position.x < doorPosition.x && position.y == doorPosition.y;
         moves.add(new Action("Ist die Tür rechts zu sehen?"));
         moves.add(new Action(yesNo(b)));
+        checkMoves();
         return b;
     }
 
-    public boolean isExitLeft() {
+    public boolean isExitLeft() throws MaxMovesException {
         boolean b = position.x > doorPosition.x && position.y == doorPosition.y;
         moves.add(new Action("Ist die Tür links zu sehen?"));
         moves.add(new Action(yesNo(b)));
+        checkMoves();
         return b;
     }
 
-    public boolean isExitDown() {
+    public boolean isExitDown() throws MaxMovesException {
         boolean b = position.y < doorPosition.y && position.x == doorPosition.x;
         moves.add(new Action("Ist die Tür unten zu sehen?"));
         moves.add(new Action(yesNo(b)));
+        checkMoves();
         return b;
     }
 
-    public boolean isExitUp() {
+    public boolean isExitUp() throws MaxMovesException {
         boolean b = position.y > doorPosition.y && position.x == doorPosition.x;
         moves.add(new Action("Ist die Tür rechts zu sehen?"));
         moves.add(new Action(yesNo(b)));
+        checkMoves();
         return b;
     }
 
-    private void simMoveX(int amount) {
+    private void simMoveX(int amount) throws MaxMovesException {
         String msg = moveX(amount);
         moves.add(new Action(new Position(amount, 0), msg));
+        checkMoves();
     }
 
-    private void simMoveY(int amount) {
+    private void simMoveY(int amount) throws MaxMovesException {
         String msg = moveY(amount);
         moves.add(new Action(new Position(0, amount), msg));
+        checkMoves();
     }
 
-    public void right() {
+    public void right() throws MaxMovesException {
         simMoveX(1);
     }
 
-    public void left() {
+    public void left() throws MaxMovesException {
         simMoveX(-1);
     }
 
-    public void down() {
+    public void down() throws MaxMovesException {
         simMoveY(1);
     }
 
-    public void up() {
+    public void up() throws MaxMovesException {
         simMoveY(-1);
     }
 
@@ -144,6 +150,12 @@ public class Player {
 
     public boolean isOnExit() {
         return Position.equals(position, doorPosition);
+    }
+
+    private void checkMoves() throws MaxMovesException {
+        if (moves.size() > 10000) {
+            throw new MaxMovesException();
+        }
     }
 
     private static int restrict(int val, int min, int max) {
