@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
     static final int COLUMNS = 10;
     static final int ROWS = 10;
-    static final int N_OF_STARS = 10;
+    static final int N_OF_STARS = 0;
     static final Color COLOR_SQUARE = Color.black;
     static final Color COLOR_DOOR = Color.red;
     static final String PLAYER_IMG_PATH = "app/src/main/resources/player.png";
@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean gameOver = false;
     private final Player player;
     private final Door door;
+    private final Sketch sketch;
     int score = 0;
 
     Timer timer;
@@ -56,6 +57,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.door = new Door();
         this.player = new Player();
         this.player.setDoorPosition(door.position);
+        this.sketch = new Sketch(player);
         this.setStars(N_OF_STARS);
         this.startGame();
     }
@@ -172,7 +174,7 @@ public class GamePanel extends JPanel implements ActionListener {
         player.moves.clear();
         Position lastPosition = new Position(player.position);
         try {
-            Sketch.sketch(player);
+            sketch.sketch();
         } catch (MaxMovesException e) {
             System.out.println("Your sketch has exceeded the maximum number of allowed moves (10,000)." +
                     "This is most likely caused by an error in your sketch logic.");
@@ -203,8 +205,10 @@ public class GamePanel extends JPanel implements ActionListener {
                 setScore();
             }
             if (stars.size() == 0 && Position.equals(door.position, player.position)) {
+                System.out.println("Mino hat das Ziel erreicht!");
                 running = false;
                 gameOver = true;
+                player.won = true;
                 this.add(gameOverLabel);
             }
         }
