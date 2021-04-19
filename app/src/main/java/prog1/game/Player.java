@@ -13,7 +13,7 @@ public class Player {
     static final int START = UNIT_SIZE / 2 - SIZE / 2;
     Position position;
     Position doorPosition;
-    final List<Position> moves = new ArrayList<>();
+    final List<Action> moves = new ArrayList<>();
 
     final Image img;
 
@@ -32,40 +32,40 @@ public class Player {
         g.drawImage(this.img, START + UNIT_SIZE * position.x, START + UNIT_SIZE * position.y, SIZE, SIZE, observer);
     }
 
-    public void moveX(int amount) {
-        if (amount < 0) System.out.println("Der Spieler geht nach links");
-        else if (amount > 0) System.out.println("Der Spieler geht nach rechts");
-        else return;
+    public String moveX(int amount) {
         int newX = position.x + amount;
         if (newX >= 0 && newX < COLUMNS) position.x = newX;
+        if (amount < 0) return "Mino geht einen Schritt nach links";
+        else if (amount > 0) return "Mino geht einen Schritt nach rechts";
+        else return "";
     }
 
-    public void moveX(int amount, boolean print) {
-        if (print) {
-            if (amount < 0) System.out.println("Der Spieler geht nach links");
-            else if (amount > 0) System.out.println("Der Spieler geht nach rechts");
-            else return;
-        }
+    public String moveX(int amount, boolean print) {
         int newX = position.x + amount;
         if (newX >= 0 && newX < COLUMNS) position.x = newX;
-    }
-
-    public void moveY(int amount) {
-        if (amount < 0) System.out.println("Der Spieler geht nach oben");
-        else if (amount > 0) System.out.println("Der Spieler geht nach unten");
-        else return;
-        int newY = position.y + amount;
-        if (newY >= 0 && newY < ROWS) position.y = newY;
-    }
-
-    public void moveY(int amount, boolean print) {
         if (print) {
-            if (amount < 0) System.out.println("Der Spieler geht nach oben");
-            else if (amount > 0) System.out.println("Der Spieler geht nach unten");
-            else return;
+            if (amount < 0) return "Mino geht einen Schritt nach links";
+            else if (amount > 0) return "Mino geht einen Schritt nach rechts";
         }
+        return "";
+    }
+
+    public String moveY(int amount) {
         int newY = position.y + amount;
         if (newY >= 0 && newY < ROWS) position.y = newY;
+        if (amount < 0) return "Mino geht einen Schritt nach oben";
+        else if (amount > 0) return "Mino geht einen Schritt nach unten";
+        else return "";
+    }
+
+    public String moveY(int amount, boolean print) {
+        int newY = position.y + amount;
+        if (newY >= 0 && newY < ROWS) position.y = newY;
+        if (print) {
+            if (amount < 0) return "Mino geht einen Schritt nach oben";
+            else if (amount > 0) return "Mino geht einen Schritt nach unten";
+        }
+        return "";
     }
 
     public void move(int x, int y) {
@@ -79,29 +79,41 @@ public class Player {
     }
 
     public boolean isExitRight() {
-        return position.x < doorPosition.x && position.y == doorPosition.y;
+        boolean b = position.x < doorPosition.x && position.y == doorPosition.y;
+        moves.add(new Action("Ist die Tür rechts zu sehen?"));
+        moves.add(new Action(yesNo(b)));
+        return b;
     }
 
     public boolean isExitLeft() {
-        return position.x > doorPosition.x && position.y == doorPosition.y;
+        boolean b = position.x > doorPosition.x && position.y == doorPosition.y;
+        moves.add(new Action("Ist die Tür links zu sehen?"));
+        moves.add(new Action(yesNo(b)));
+        return b;
     }
 
     public boolean isExitDown() {
-        return position.y < doorPosition.y && position.x == doorPosition.x;
+        boolean b = position.y < doorPosition.y && position.x == doorPosition.x;
+        moves.add(new Action("Ist die Tür unten zu sehen?"));
+        moves.add(new Action(yesNo(b)));
+        return b;
     }
 
     public boolean isExitUp() {
-        return position.y > doorPosition.y && position.x == doorPosition.x;
+        boolean b = position.y > doorPosition.y && position.x == doorPosition.x;
+        moves.add(new Action("Ist die Tür rechts zu sehen?"));
+        moves.add(new Action(yesNo(b)));
+        return b;
     }
 
     private void simMoveX(int amount) {
-        moveX(amount, false);
-        moves.add(new Position(amount, 0));
+        String msg = moveX(amount);
+        moves.add(new Action(new Position(amount, 0), msg));
     }
 
     private void simMoveY(int amount) {
-        moveY(amount, false);
-        moves.add(new Position(0, amount));
+        String msg = moveY(amount);
+        moves.add(new Action(new Position(0, amount), msg));
     }
 
     public void right() {
@@ -121,7 +133,9 @@ public class Player {
     }
 
     public void nextMove() {
-        move(moves.remove(0));
+        Action nextAction = moves.remove(0);
+        if (!nextAction.msg.isEmpty()) System.out.println(nextAction.msg);
+        if (!nextAction.position.isEmpty()) move(nextAction.position);
     }
 
     public boolean movesDone() {
@@ -136,6 +150,10 @@ public class Player {
         if (val < min) return min;
         if (val > max - 1) return max - 1;
         return val;
+    }
+
+    private static String yesNo(boolean yes) {
+        return yes ? "Ja" : "Nein";
     }
 
     public void reset() {
