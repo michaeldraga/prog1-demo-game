@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private final Player player;
     private final Door door;
     private final Sketch sketch;
+    private final List<Square> squares = new ArrayList<Square>();
     int score = 0;
 
     Timer timer;
@@ -54,12 +55,22 @@ public class GamePanel extends JPanel implements ActionListener {
         this.initScoreLabel();
         this.initGameOverLabel();
         this.setScore();
+        this.createSquares();
         this.door = new Door();
-        this.player = new Player();
+        this.player = new Player(this);
         this.player.setDoorPosition(door.position);
-        this.sketch = new Sketch(player);
+        this.sketch = new Sketch(player, this);
         this.setStars(N_OF_STARS);
         this.startGame();
+    }
+
+    private void createSquares() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                squares.add(new Square(new Position(UNIT_SIZE * j, UNIT_SIZE * i)));
+            }
+        }
+        squares.forEach(s -> System.out.println(s.color.toString()));
     }
 
     private void initScoreLabel() {
@@ -94,6 +105,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private void resetEverything() {
         gameOver = false;
         running = false;
+        squares.forEach(Square::resetColor);
         this.remove(this.gameOverLabel);
         stars.clear();
         player.resetMoves();
@@ -154,7 +166,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void draw(Graphics g) {
-        paintSquares(g);
+        for (int i = 0; i < squares.size(); i++) {
+            squares.get(i).paint(g);
+        }
         door.paint(g);
         stars.forEach(s -> s.paint(g));
         player.paint(g);
@@ -186,6 +200,14 @@ public class GamePanel extends JPanel implements ActionListener {
     public void gameOver(Graphics g) {
         g.setColor(new Color(0, 0, 0, 200));
         g.fillRect(0, 0, 500, 500);
+    }
+
+    public void changeSquareColor(Color c) {
+        var filter = squares.stream().filter(s -> Position.equals(player.position.mult(UNIT_SIZE), s.position)).findAny();
+        if (filter.isPresent()) {
+            var square = filter.get();
+            square.color = c;
+        }
     }
 
     @Override

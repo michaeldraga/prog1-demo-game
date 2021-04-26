@@ -1,11 +1,15 @@
 package prog1.game;
 
+import java.awt.*;
+
 public class Sketch {
 
-    Player player;
+    private Player player;
+    private GamePanel game;
 
-    public Sketch(Player player) {
+    public Sketch(Player player, GamePanel game) {
         this.player = player;
+        this.game = game;
     }
 
     private void up() throws MaxMovesException {
@@ -48,16 +52,26 @@ public class Sketch {
         return player.won;
     }
 
+    private void colorField(String color) {
+        switch (color) {
+            case "blau" -> player.moves.add(new Action(Color.blue));
+            case "grün" -> player.moves.add(new Action(Color.green));
+        }
+    }
+
     public void sketch() throws MaxMovesException {
         while (!isExitRight() && !isExitLeft() && !isOnExit()) {
+            colorField("blau");
             down();
         }
         if (isExitRight()) {
             while (!isOnExit()) {
+                colorField("grün");
                 right();
             }
         } else {
             while (!isOnExit()) {
+                colorField("grün");
                 left();
             }
         }

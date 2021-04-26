@@ -13,19 +13,22 @@ public class Player {
     static final int START = UNIT_SIZE / 2 - SIZE / 2;
     Position position;
     Position doorPosition;
+    GamePanel game;
     final List<Action> moves = new ArrayList<>();
     boolean won = false;
 
     final Image img;
 
-    public Player() {
+    public Player(GamePanel game) {
         this.position = new Position(0, 0);
         this.img = GamePanel.readImage(GamePanel.PLAYER_IMG_PATH);
+        this.game = game;
     }
 
-    public Player(int x, int y) {
+    public Player(GamePanel game, int x, int y) {
         this.position = new Position(x, y);
         this.img = GamePanel.readImage(GamePanel.PLAYER_IMG_PATH);
+        this.game = game;
     }
 
     public void paint(Graphics g) {
@@ -143,6 +146,7 @@ public class Player {
         Action nextAction = moves.remove(0);
         if (!nextAction.msg.isEmpty()) System.out.println(nextAction.msg);
         if (!nextAction.position.isEmpty()) move(nextAction.position);
+        if (!(nextAction.color == null)) this.game.changeSquareColor(nextAction.color);
     }
 
     public boolean movesDone() {
